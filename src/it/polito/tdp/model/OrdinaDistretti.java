@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class OrdinaDistretti implements Comparator<Integer>{
 

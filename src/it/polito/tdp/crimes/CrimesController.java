@@ -5,6 +5,7 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.Month;
 import java.time.Year;
 import java.util.ResourceBundle;
@@ -69,6 +70,38 @@ public class CrimesController {
 
     @FXML
     void doSimula(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    	if(boxAnno.getValue()==null || boxMese.getValue()==null || boxGiorno.getValue()==null) {
+    		txtResult.setText("Mancano o il giorno o il mese o l'anno");
+    		return;
+    	}
+    	
+    	
+    	int anno=boxAnno.getValue();
+    	Month mese=boxMese.getValue();
+    	int giorno=boxGiorno.getValue();
+    	int m=mese.getValue();		//converto il mese in intero
+    	int numAgenti=0;
+    	
+    	try {
+    		 numAgenti=Integer.parseInt(txtN.getText());
+    	}catch(NumberFormatException e) {
+    		txtResult.setText("Inserire intero");
+    		return;
+    	}
+    	
+    	
+    	if(numAgenti>10 || numAgenti<1) {
+    		txtResult.setText("Inserire un numero di agenti tra 1 e 10");
+    		return;
+    	}
+    	
+    	int numMalGestiti=model.simula(giorno, m, anno, numAgenti);
+    	
+    	txtResult.setText("Il numero di eventi mal gestiti sono "+numMalGestiti);
+    	
 
     }
 

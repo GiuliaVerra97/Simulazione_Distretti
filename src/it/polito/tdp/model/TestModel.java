@@ -13,6 +13,11 @@ public class TestModel {
 		
 		System.out.println(model.getAdiacenti());
 		
+		int giorno=6;
+		int mese=2;
+		int numAgenti=5;
+		model.simula(giorno, mese, anno, numAgenti);
+		
 		
 	}
 

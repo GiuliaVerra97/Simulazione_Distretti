@@ -133,6 +133,34 @@ public class Model {
 		this.grafo = grafo;
 	}
 
+
+	public int simula(int giorno, int m, int anno, int numAgenti) {
+		
+		List<Event> crimini=dao.getCrimini(giorno, m, anno);
+		
+		int criminiMin=Integer.MAX_VALUE;
+		int centrale=0;
+		
+		for(Integer distretto: distretti) {
+			
+			int numCrimini=dao.getNumCrimini(anno, distretto);		//calcolo il num di crimini in ogni distretto in quell'anno
+			
+			if(criminiMin>numCrimini) {
+				criminiMin=numCrimini;
+				centrale=distretto;
+			}
+			
+		}
+		
+		Simula sim=new Simula();
+		sim.init(numAgenti, centrale, crimini, grafo);
+		sim.run();
+		
+		return sim.getNumMalGestiti();
+		
+		
+	}
+
 	
 	
 
