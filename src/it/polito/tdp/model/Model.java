@@ -1,11 +1,11 @@
 package it.polito.tdp.model;
 
-import java.time.Year;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -21,9 +21,11 @@ public class Model {
 	
 	EventsDao dao;
 	Graph<Integer, DefaultWeightedEdge> grafo;
+	List<Integer> distretti;
 	
 	public Model() {
 		dao=new EventsDao();
+		distretti=new ArrayList<Integer>();
 	}
 	
 
@@ -38,7 +40,7 @@ public class Model {
 		//vertici
 		grafo=new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 		
-		List<Integer> distretti=dao.listAllDistricts();
+		distretti=dao.listAllDistricts();
 		
 		Graphs.addAllVertices(grafo, distretti);
 		
@@ -47,23 +49,24 @@ public class Model {
 		//archi
 		LatLng coord1;		
 		
-		for(int d1: distretti) {
+		for(Integer d1: distretti) {
 			
 			coord1=dao.calcolaCoordinate(anno, d1);
 			
-			for(int d2: distretti) {
+			for(Integer d2: distretti) {
 				
-				if(d1!=d2 && grafo.getAllEdges(d1, d2)==null) {
+				if(d1!=d2 && !grafo.containsEdge(d1, d2)) {
 				
 				LatLng coord2=dao.calcolaCoordinate(anno, d2);		//nuova libreria
-				
-				System.out.println(coord1+" "+coord2);
-				
+								
 				double distanza=LatLngTool.distance(coord1, coord2, LengthUnit.KILOMETER);			//calcola la distanza in kilometres
 				
-				System.out.println(distanza);
+				/*System.out.println("coordinata1 "+coord1);
+				System.out.println("coordinata2 "+coord2);
+				System.out.println(distanza);*/
 				
 				Graphs.addEdge(grafo, d1,d2, distanza);			//la distanza è il peso
+				
 				}
 				
 			}
@@ -74,6 +77,53 @@ public class Model {
 	}
 
 
+	
+	
+	/**
+	 * Metodo che ordina i distretti vicini al vertice passato come parametro in ordine crescente di distanza
+	 */
+	public String getAdiacenti() {
+		
+		String s="";
+		for(Integer d: distretti) {
+			
+			List<Integer> adiacenti=this.ordinaAdiacenti(d);
+			
+			s="\n\n\n"+s+"I distretti vicini a "+d+" sono\n";
+			
+			for(Integer a: adiacenti) {
+				s=s+a+" con distanza "+grafo.getEdgeWeight(grafo.getEdge(d, a))+"\n";
+			}
+			
+		}
+		
+		return s;
+		
+		
+	}
+	
+	
+	
+	
+	/**
+	 * Ordina i vicini in base al peso dell'arco (distanza tra un distretto e l'altro). Per farlo creo una nuova classe compara le distanza
+	 * @param distretto
+	 * @return lista di distretti
+	 */
+	public List<Integer> ordinaAdiacenti(int distretto){
+		
+		List<Integer> vicini=Graphs.neighborListOf(grafo, distretto);
+		Collections.sort(vicini, new OrdinaDistretti(distretto, this.grafo));
+		
+		return vicini;
+		
+	}
+	
+	
+	
+	
+	
+	//get
 	public Graph<Integer, DefaultWeightedEdge> getGrafo() {
 		return grafo;
 	}
@@ -85,15 +135,7 @@ public class Model {
 
 	
 	
-	public List<Integer> adiacenti(int distretto){
-		
-		List<Integer> vicini=Graphs.neighborListOf(grafo, distretto);
-		
-		
-		
-		return vicini;
-		
-	}
+
 	
 
 	

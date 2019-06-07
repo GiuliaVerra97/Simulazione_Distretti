@@ -51,6 +51,20 @@ public class CrimesController {
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
     	
+    	txtResult.clear();
+    	
+    	if(boxAnno.getValue()==null) {
+    		txtResult.setText("Inserire anno");
+    		return;
+    	}
+    	
+    	int anno=boxAnno.getValue();
+    	
+    	model.creaGrafo(anno);
+    	String s=model.getAdiacenti();
+    	txtResult.appendText("Grafo creato\n"+s);
+    	
+    	
     }
 
     @FXML

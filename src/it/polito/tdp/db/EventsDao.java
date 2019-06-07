@@ -169,7 +169,7 @@ public class EventsDao {
 				while(res.next()) {
 					try {
 					
-						coordinata=new LatLng(res.getDouble("lon"), res.getDouble("lat"));
+						coordinata=new LatLng(res.getDouble("lat"), res.getDouble("lon"));
 						
 					} catch (Throwable t) {
 						t.printStackTrace();
